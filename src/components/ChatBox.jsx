@@ -27,7 +27,8 @@ export default function ChatBox() {
   }, [pensando])
 
   const hablar = (texto) => {
-    const utterance = new SpeechSynthesisUtterance(texto)
+    const textoSinEmojis = texto.replace(/[\u{1F600}-\u{1F6FF}|\u{2700}-\u{27BF}|\u{1F300}-\u{1F5FF}|\u{1F900}-\u{1F9FF}|\u{1FA70}-\u{1FAFF}]/gu, '')
+    const utterance = new SpeechSynthesisUtterance(textoSinEmojis)
     utterance.lang = "es-ES"
     window.speechSynthesis.speak(utterance)
   }
