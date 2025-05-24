@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const preguntasFrecuentes = [
@@ -14,7 +14,7 @@ export default function ChatBox() {
   ])
   
   const [entrada, setEntrada] = useState('')
-  const [pensando, setPensando] = useState(false)
+  const [puntos, setPuntos] = useState('')
 
   const enviarMensaje = async (texto) => {
   if (!texto.trim()) return
@@ -41,7 +41,6 @@ export default function ChatBox() {
     setPensando(false)
   }
 }
-
     const nuevaConversacion = async () => {
       const usuario = localStorage.getItem("usuario_id")
 
@@ -58,7 +57,15 @@ export default function ChatBox() {
       ])
     }
 
+  useEffect(() => {
+    if (!pensando) return
 
+    const interval = setInterval(() => {
+      setPuntos(prev => (prev.length >= 3 ? '' : prev + '.'))
+    }, 500)
+
+    return () => clearInterval(interval)
+  }, [pensando])
 
   return (
     <>
