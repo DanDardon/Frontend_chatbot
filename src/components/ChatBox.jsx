@@ -12,13 +12,16 @@ export default function ChatBox() {
   const [mensajes, setMensajes] = useState([
     { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
   ])
+  
   const [entrada, setEntrada] = useState('')
+  const [pensando, setPensando] = useState(false)
 
   const enviarMensaje = async (texto) => {
   if (!texto.trim()) return
   const nuevo = [...mensajes, { emisor: 'usuario', texto }]
   setMensajes(nuevo)
   setEntrada('')
+  setPensando(true) // 👈 Activar "pensando..."
 
   const usuario = localStorage.getItem("usuario_id") || (() => {
     const id = crypto.randomUUID()
@@ -34,6 +37,8 @@ export default function ChatBox() {
     setMensajes([...nuevo, { emisor: 'bot', texto: res.data.respuesta }])
   } catch (e) {
     setMensajes([...nuevo, { emisor: 'bot', texto: 'Error al conectar con el servidor.' }])
+  } finally {
+    setPensando(false)
   }
 }
 
@@ -68,6 +73,13 @@ export default function ChatBox() {
       <div className="nueva-conversacion">
         <button onClick={nuevaConversacion}>🗑 Nueva conversación</button>
       </div>
+
+      {pensando && (
+        <div className="pensando">
+          <span>MediAssist está pensando</span>
+          <span className="puntos">...</span>
+        </div>
+      )}
 
       <div className="faq-buttons">
         {preguntasFrecuentes.map((p, i) => (
