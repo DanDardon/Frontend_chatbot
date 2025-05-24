@@ -16,16 +16,21 @@ export default function ChatBox() {
   const [entrada, setEntrada] = useState('')
   const [puntos, setPuntos] = useState('')
   const [pensando, setPensando] = useState(false)
+  const [vozActiva, setVozActiva] = useState(false)
 
   useEffect(() => {
     if (!pensando) return
-
     const interval = setInterval(() => {
       setPuntos(prev => (prev.length >= 3 ? '' : prev + '.'))
     }, 500)
-
     return () => clearInterval(interval)
   }, [pensando])
+
+  const hablar = (texto) => {
+    const utterance = new SpeechSynthesisUtterance(texto)
+    utterance.lang = "es-ES"
+    window.speechSynthesis.speak(utterance)
+  }
 
   const enviarMensaje = async (texto) => {
     if (!texto.trim()) return
@@ -45,9 +50,17 @@ export default function ChatBox() {
         mensaje: texto,
         usuario: usuario
       })
-      setMensajes([...nuevo, { emisor: 'bot', texto: res.data.respuesta }])
+      const respuesta = res.data.respuesta
+      setMensajes([...nuevo, { emisor: 'bot', texto: respuesta }])
+      if (vozActiva) {
+        hablar(respuesta)
+      }
     } catch (e) {
-      setMensajes([...nuevo, { emisor: 'bot', texto: 'Error al conectar con el servidor.' }])
+      const errorText = "Error al conectar con el servidor."
+      setMensajes([...nuevo, { emisor: 'bot', texto: errorText }])
+      if (vozActiva) {
+        hablar(errorText)
+      }
     } finally {
       setPensando(false)
     }
@@ -55,20 +68,28 @@ export default function ChatBox() {
 
   const nuevaConversacion = async () => {
     const usuario = localStorage.getItem("usuario_id")
-
     try {
       await axios.post('https://chatbot-backend-4qkl.onrender.com/reiniciar', { usuario })
     } catch (e) {
       console.warn("No se pudo reiniciar en backend:", e)
     }
-
     setMensajes([
       { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
     ])
   }
 
+  const toggleVoz = () => {
+    setVozActiva(!vozActiva)
+  }
+
   return (
     <>
+      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+        <button onClick={toggleVoz}>
+          {vozActiva ? '🔈 Desactivar voz' : '🔇 Activar voz'}
+        </button>
+      </div>
+
       <div className="chat-box">
         {mensajes.map((msg, i) => (
           <div key={i} className={`chat-message ${msg.emisor}`}>
