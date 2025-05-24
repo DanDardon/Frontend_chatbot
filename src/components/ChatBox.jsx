@@ -37,15 +37,22 @@ export default function ChatBox() {
   }
 }
 
-    const nuevaConversacion = () => {
-      localStorage.removeItem("usuario_id")
-      const nuevoId = crypto.randomUUID()
-      localStorage.setItem("usuario_id", nuevoId)
+    const nuevaConversacion = async () => {
+      const usuario = localStorage.getItem("usuario_id")
+
+      try {
+        await axios.post('https://chatbot-backend-4qkl.onrender.com/reiniciar', {
+          usuario: usuario
+        })
+      } catch (e) {
+        console.warn("No se pudo reiniciar en backend:", e)
+      }
 
       setMensajes([
         { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
       ])
     }
+
 
 
   return (
