@@ -37,6 +37,17 @@ export default function ChatBox() {
   }
 }
 
+  const nuevaConversacion = () => {
+    localStorage.removeItem("usuario_id")
+    const nuevoId = crypto.randomUUID()
+    localStorage.setItem("usuario_id", nuevoId)
+
+    setMensajes([
+      { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
+    ])
+  }
+
+
   return (
     <>
       <div className="chat-box">
