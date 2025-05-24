@@ -15,6 +15,7 @@ export default function ChatBox() {
   
   const [entrada, setEntrada] = useState('')
   const [puntos, setPuntos] = useState('')
+  const [pensando, setPensando] = useState(false)
 
   const enviarMensaje = async (texto) => {
   if (!texto.trim()) return
