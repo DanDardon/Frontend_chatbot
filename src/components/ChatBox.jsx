@@ -86,9 +86,17 @@ export default function ChatBox() {
   return (
     <>
       <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-        <button onClick={toggleVoz}>
-          {vozActiva ? '🔈 Desactivar voz' : '🔇 Activar voz'}
-        </button>
+        <button className="boton-voz" onClick={toggleVoz}>
+          {vozActiva ? (
+            <>
+              🔈 <span>Voz activada</span>
+            </>
+          ) : (
+            <>
+              🔇 <span>Voz desactivada</span>
+            </>
+          )}
+      </button>
       </div>
 
       <div className="chat-box">
