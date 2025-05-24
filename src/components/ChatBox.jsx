@@ -15,17 +15,27 @@ export default function ChatBox() {
   const [entrada, setEntrada] = useState('')
 
   const enviarMensaje = async (texto) => {
-    if (!texto.trim()) return
-    const nuevo = [...mensajes, { emisor: 'usuario', texto }]
-    setMensajes(nuevo)
-    setEntrada('')
-    try {
-      const res = await axios.post('http://localhost:3000/mensaje', { mensaje: texto })
-      setMensajes([...nuevo, { emisor: 'bot', texto: res.data.respuesta }])
-    } catch (e) {
-      setMensajes([...nuevo, { emisor: 'bot', texto: 'Error al conectar con el servidor.' }])
-    }
+  if (!texto.trim()) return
+  const nuevo = [...mensajes, { emisor: 'usuario', texto }]
+  setMensajes(nuevo)
+  setEntrada('')
+
+  const usuario = localStorage.getItem("usuario_id") || (() => {
+    const id = crypto.randomUUID()
+    localStorage.setItem("usuario_id", id)
+    return id
+  })()
+
+  try {
+    const res = await axios.post('https://chatbot-backend-4qkl.onrender.com/mensaje', {
+      mensaje: texto,
+      usuario: usuario
+    })
+    setMensajes([...nuevo, { emisor: 'bot', texto: res.data.respuesta }])
+  } catch (e) {
+    setMensajes([...nuevo, { emisor: 'bot', texto: 'Error al conectar con el servidor.' }])
   }
+}
 
   return (
     <>
