@@ -12,10 +12,21 @@ export default function ChatBox() {
   const [mensajes, setMensajes] = useState([
     { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
   ])
-  
+
+  const [mensajes, setMensajes] = useState([...])
   const [entrada, setEntrada] = useState('')
   const [puntos, setPuntos] = useState('')
   const [pensando, setPensando] = useState(false)
+
+  useEffect(() => {
+    if (!pensando) return
+
+    const interval = setInterval(() => {
+      setPuntos(prev => (prev.length >= 3 ? '' : prev + '.'))
+    }, 500)
+
+    return () => clearInterval(interval)
+  }, [pensando])
 
   const enviarMensaje = async (texto) => {
   if (!texto.trim()) return
@@ -58,16 +69,6 @@ export default function ChatBox() {
       ])
     }
 
-  useEffect(() => {
-    if (!pensando) return
-
-    const interval = setInterval(() => {
-      setPuntos(prev => (prev.length >= 3 ? '' : prev + '.'))
-    }, 500)
-
-    return () => clearInterval(interval)
-  }, [pensando])
-
   return (
     <>
       <div className="chat-box">
@@ -84,10 +85,10 @@ export default function ChatBox() {
 
       {pensando && (
         <div className="pensando">
-          <span>MediAssist está pensando</span>
-          <span className="puntos">...</span>
+          <span>MediAssist está pensando{puntos}</span>
         </div>
-      )}
+        )}
+
 
       <div className="faq-buttons">
         {preguntasFrecuentes.map((p, i) => (
