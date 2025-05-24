@@ -87,3 +87,17 @@ body {
   border: none;
   cursor: pointer;
 }
+
+.nueva-conversacion {
+  margin-top: 1rem;
+  text-align: center;
+}
+.nueva-conversacion button {
+  background: #3c80e7;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+}
+
