@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
@@ -12,8 +13,6 @@ export default function ChatBox() {
   const [mensajes, setMensajes] = useState([
     { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
   ])
-
-  const [mensajes, setMensajes] = useState([...])
   const [entrada, setEntrada] = useState('')
   const [puntos, setPuntos] = useState('')
   const [pensando, setPensando] = useState(false)
@@ -29,45 +28,44 @@ export default function ChatBox() {
   }, [pensando])
 
   const enviarMensaje = async (texto) => {
-  if (!texto.trim()) return
-  const nuevo = [...mensajes, { emisor: 'usuario', texto }]
-  setMensajes(nuevo)
-  setEntrada('')
-  setPensando(true) // 👈 Activar "pensando..."
+    if (!texto.trim()) return
+    const nuevo = [...mensajes, { emisor: 'usuario', texto }]
+    setMensajes(nuevo)
+    setEntrada('')
+    setPensando(true)
 
-  const usuario = localStorage.getItem("usuario_id") || (() => {
-    const id = crypto.randomUUID()
-    localStorage.setItem("usuario_id", id)
-    return id
-  })()
+    const usuario = localStorage.getItem("usuario_id") || (() => {
+      const id = crypto.randomUUID()
+      localStorage.setItem("usuario_id", id)
+      return id
+    })()
 
-  try {
-    const res = await axios.post('https://chatbot-backend-4qkl.onrender.com/mensaje', {
-      mensaje: texto,
-      usuario: usuario
-    })
-    setMensajes([...nuevo, { emisor: 'bot', texto: res.data.respuesta }])
-  } catch (e) {
-    setMensajes([...nuevo, { emisor: 'bot', texto: 'Error al conectar con el servidor.' }])
-  } finally {
-    setPensando(false)
-  }
-}
-    const nuevaConversacion = async () => {
-      const usuario = localStorage.getItem("usuario_id")
-
-      try {
-        await axios.post('https://chatbot-backend-4qkl.onrender.com/reiniciar', {
-          usuario: usuario
-        })
-      } catch (e) {
-        console.warn("No se pudo reiniciar en backend:", e)
-      }
-
-      setMensajes([
-        { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
-      ])
+    try {
+      const res = await axios.post('https://chatbot-backend-4qkl.onrender.com/mensaje', {
+        mensaje: texto,
+        usuario: usuario
+      })
+      setMensajes([...nuevo, { emisor: 'bot', texto: res.data.respuesta }])
+    } catch (e) {
+      setMensajes([...nuevo, { emisor: 'bot', texto: 'Error al conectar con el servidor.' }])
+    } finally {
+      setPensando(false)
     }
+  }
+
+  const nuevaConversacion = async () => {
+    const usuario = localStorage.getItem("usuario_id")
+
+    try {
+      await axios.post('https://chatbot-backend-4qkl.onrender.com/reiniciar', { usuario })
+    } catch (e) {
+      console.warn("No se pudo reiniciar en backend:", e)
+    }
+
+    setMensajes([
+      { emisor: 'bot', texto: 'Hola, soy MediAssist, tu asistente médico virtual. ¿Cómo puedo ayudarte hoy?' }
+    ])
+  }
 
   return (
     <>
@@ -77,18 +75,16 @@ export default function ChatBox() {
             <div className={`chat-bubble ${msg.emisor}`}>{msg.texto}</div>
           </div>
         ))}
+        {pensando && (
+          <div className="pensando">
+            <span>MediAssist está pensando{puntos}</span>
+          </div>
+        )}
       </div>
 
       <div className="nueva-conversacion">
         <button onClick={nuevaConversacion}>🗑 Nueva conversación</button>
       </div>
-
-      {pensando && (
-        <div className="pensando">
-          <span>MediAssist está pensando{puntos}</span>
-        </div>
-        )}
-
 
       <div className="faq-buttons">
         {preguntasFrecuentes.map((p, i) => (
