@@ -56,7 +56,7 @@ export default function ChatBox() {
     })()
 
     try {
-      const res = await axios.post('http://localhost:3000/mensaje', {
+      const res = await axios.post('https://chatbot-backend-4qkl.onrender.com/mensaje', {
         mensaje: texto,
         usuario: usuario
       })
@@ -79,7 +79,7 @@ export default function ChatBox() {
   const nuevaConversacion = async () => {
     const usuario = localStorage.getItem("usuario_id")
     try {
-      await axios.post('http://localhost:3000/mensaje', { usuario }) //http://localhost:3000/mensaje 
+      await axios.post('https://chatbot-backend-4qkl.onrender.com/reiniciar', { usuario }) //http://localhost:3000/mensaje 
                                                                                           // https://chatbot-backend-4qkl.onrender.com/reiniciar
     } catch (e) {
       console.warn("No se pudo reiniciar en backend:", e)
