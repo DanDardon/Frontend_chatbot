@@ -1,6 +1,8 @@
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
+import ReactMarkdown from 'react-markdown'
+
 
 const preguntasFrecuentes = [
   "¿Qué debo hacer si tengo fiebre?",
@@ -17,6 +19,7 @@ export default function ChatBox() {
   const [puntos, setPuntos] = useState('')
   const [pensando, setPensando] = useState(false)
   const [vozActiva, setVozActiva] = useState(false)
+  const chatEndRef = useRef(null)
 
   useEffect(() => {
     if (!pensando) return
@@ -25,6 +28,12 @@ export default function ChatBox() {
     }, 500)
     return () => clearInterval(interval)
   }, [pensando])
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [mensajes])
 
   const hablar = (texto) => {
     const textoSinEmojis = texto.replace(/[\u{1F600}-\u{1F6FF}|\u{2700}-\u{27BF}|\u{1F300}-\u{1F5FF}|\u{1F900}-\u{1F9FF}|\u{1FA70}-\u{1FAFF}]/gu, '')
@@ -47,7 +56,7 @@ export default function ChatBox() {
     })()
 
     try {
-      const res = await axios.post('https://chatbot-backend-4qkl.onrender.com/mensaje', {
+      const res = await axios.post('http://localhost:3000/mensaje', {
         mensaje: texto,
         usuario: usuario
       })
@@ -70,7 +79,8 @@ export default function ChatBox() {
   const nuevaConversacion = async () => {
     const usuario = localStorage.getItem("usuario_id")
     try {
-      await axios.post('https://chatbot-backend-4qkl.onrender.com/reiniciar', { usuario })
+      await axios.post('http://localhost:3000/mensaje', { usuario }) //http://localhost:3000/mensaje 
+                                                                                          // https://chatbot-backend-4qkl.onrender.com/reiniciar
     } catch (e) {
       console.warn("No se pudo reiniciar en backend:", e)
     }
@@ -82,6 +92,8 @@ export default function ChatBox() {
   const toggleVoz = () => {
     setVozActiva(!vozActiva)
   }
+
+  
 
   return (
     <>
@@ -101,15 +113,22 @@ export default function ChatBox() {
 
       <div className="chat-box">
         {mensajes.map((msg, i) => (
-          <div key={i} className={`chat-message ${msg.emisor}`}>
-            <div className={`chat-bubble ${msg.emisor}`}>{msg.texto}</div>
+        <div
+          key={i}
+          className={`chat-message ${msg.emisor}`}
+          style={{ animationDelay: `${i * 10}ms` }}
+        >
+          <div className={`chat-bubble ${msg.emisor}`}>
+            <ReactMarkdown>{msg.texto}</ReactMarkdown>
           </div>
-        ))}
+        </div>
+      ))}
         {pensando && (
           <div className="pensando">
             <span>MediAssist está pensando{puntos}</span>
           </div>
         )}
+        <div ref={chatEndRef} />
       </div>
 
       <div className="nueva-conversacion">
@@ -135,3 +154,4 @@ export default function ChatBox() {
     </>
   )
 }
+
