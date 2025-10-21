@@ -5,7 +5,7 @@ services:
     plan: free
     rootDir: frontend
     buildCommand: npm ci && npm run build
-    staticPublishPath: dist
+    staticPublishPath: dist         # <-- sin "./"
     envVars:
       - key: VITE_API_URL
         sync: false
