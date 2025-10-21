@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: medical-chatbot-frontend
+    runtime: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
