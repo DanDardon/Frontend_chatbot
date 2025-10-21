@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Menu, Search, Plus, Settings, User, Send, MessageSquare, Mic, ThumbsUp, ThumbsDown, Trash2, X } from "lucide-react";
 
-const API_BASE_URL = "http://127.0.0.1:3000";
+const API_BASE_URL = "https://chatbot-backend-4qkl.onrender.com";
 
 const getConvId = (c) => c?.id_conversacion ?? c?.id ?? c?.conversation_id ?? c?.uuid ?? c?.ID;
 const getConvTitle = (c) => c?.titulo ?? c?.title ?? c?.nombre ?? `Chat ${getConvId(c) ?? ""}`.trim();
